@@ -161,6 +161,11 @@ public class BackApplication {
 					.denominacion("Bebidas")
 					.build();
 
+			//Crear Categoria Comida
+			Categoria categoriaComida = Categoria.builder()
+					.denominacion("Comidas")
+					.build();
+
 			//Crear subcategoria para categoria 1
 			Categoria subcategoria = Categoria.builder()
 					.denominacion("Tragos")
@@ -196,9 +201,12 @@ public class BackApplication {
 
 			//Guardar Categoria
 			categoria.getSucursales().add(sucursal1);
-			categoria.getSucursales().add(sucursal2);;
+			categoria.getSucursales().add(sucursal2);
+			categoriaComida.getSucursales().add(sucursal1);
+			categoriaComida.getSucursales().add(sucursal2);
 			categoria.getSubCategorias().add(subcategoria);
 			categoriaRepository.save(categoria);
+			categoriaRepository.save(categoriaComida);
 
 			//Guardar Articulos
 			articuloInsumo1.setCategoria(categoria);
@@ -314,6 +322,59 @@ public class BackApplication {
 					.pedido(pedido)
 					.build();
 			facturaRepository.save(factura);
+
+			//Crear ArticuloManufacturado
+			UnidadMedida unidadMedidaGramos = UnidadMedida.builder()
+					.denominacion("Gramos")
+					.build();
+			unidadMedidaRepository.save(unidadMedidaGramos);
+
+			ArticuloInsumo harina = ArticuloInsumo.builder()
+					.denominacion("Harina")
+					.precioVenta(500.)
+					.unidadMedida(unidadMedidaGramos)
+					.precioCompra(200.)
+					.stockActual(60)
+					.stockMaximo(200)
+					.esParaElaborar(true)
+					.categoria(categoriaComida)
+					.build();
+
+			ArticuloInsumo queso = ArticuloInsumo.builder()
+					.denominacion("Queso")
+					.precioVenta(900.)
+					.unidadMedida(unidadMedidaGramos)
+					.precioCompra(500.)
+					.stockActual(80)
+					.stockMaximo(500)
+					.esParaElaborar(true)
+					.categoria(categoriaComida)
+					.build();
+
+			articuloInsumoRepository.save(harina);
+			articuloInsumoRepository.save(queso);
+
+			ArticuloManufacturado pizza = ArticuloManufacturado.builder()
+					.descripcion("Pizza Casera")
+					.tiempoEstimadoMinutos(20)
+					.preparacion("Lorem ipsum dolor sit amet. Et tempora consequatur sit quas fugiat in earum consequuntur sit molestiae corporis. Ut consectetur quae ea aliquam magnam aut exercitationem repellat est blanditiis minima sed quaerat dignissimos")
+					.build();
+
+			ArticuloManufacturadoDetalle detalle1 = ArticuloManufacturadoDetalle.builder()
+					.cantidad(1)
+					.articuloInsumo(harina)
+					.articuloManufacturado(pizza)
+					.build();
+
+			ArticuloManufacturadoDetalle detalle2 = ArticuloManufacturadoDetalle.builder()
+					.cantidad(1)
+					.articuloInsumo(queso)
+					.articuloManufacturado(pizza)
+					.build();
+
+			pizza.getArticuloManufacturadoDetalles().add(detalle1);
+			pizza.getArticuloManufacturadoDetalles().add(detalle2);
+			articuloManufacturadoRepository.save(pizza);
 		};
 	}
 }
